@@ -1,0 +1,35 @@
+/* base code from cssarrowplease.com */
+.arrow_box {
+	position: relative;
+	border: 5px solid #b99470;
+    border-radius: 10px;
+    width: 195px;
+    height: 80px;
+    margin-top: 375px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+}
+.arrow_box:after, .arrow_box:before {
+	bottom: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: "";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.arrow_box:after {
+	border-color: rgba(136, 183, 213, 0);
+	border-bottom-color: #fffff0;
+	border-width: 15px;
+	margin-left: 47px;
+}
+.arrow_box:before {
+	border-color: rgba(194, 225, 245, 0);
+	border-bottom-color: #b99470;
+	border-width: 22px;
+	margin-left: 40px;
+}

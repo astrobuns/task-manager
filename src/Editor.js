@@ -1,4 +1,3 @@
-//import './Editor.css';
 import { useState, useEffect } from 'react';
 import {
     Box, Button, createTheme, ThemeProvider, Typography, FormControl, Select, MenuItem,
@@ -83,18 +82,8 @@ function Editor(props) {
     const itemsPerPage = 5;
     const [page, setPage] = useState(1);
     const [completedPage, setCompletedPage] = useState(1);
-    const [numPages, setNumPages] = useState(Math.ceil(list.data.length / itemsPerPage));
-    const [completedNumPages, setCompletedNumPages] = useState(Math.ceil(completedTasks.length / itemsPerPage));
     // progress bar
     const [progress, setProgress] = useState(0);
-
-    useEffect(() => {
-        setCompletedNumPages(Math.ceil(completedTasks.length / itemsPerPage));
-    }, [completedTasks]);
-
-    useEffect(() => {
-        setNumPages(Math.max(Math.ceil(list.data.length / itemsPerPage)));
-    }, [list.data.length]);
 
     useEffect(() => {
         const completedTasksForList = list.data.filter((item) => item.complete === true);
@@ -109,60 +98,37 @@ function Editor(props) {
         }
     };
 
-    const handleChangeListShift = (e) => {
-        props.handleClickMenu(e);
-        setPage(1);
-    }
-
     const handleAddTaskShift = () => {
         props.handleAddTask(newTask);
         setNewTask("");
         if (list.data.length % itemsPerPage === 0 && list.data.length !== 0) { // if added to a new page (not including the first one)
-            let newPage = page;
-            newPage++;
-            setPage(newPage);
+            setPage(page + 1);
         }
     }
 
     const handleDeleteTaskShift = (index) => {
         props.handleDeleteTask(index, page, itemsPerPage);
         if (index === 0 && page !== 1) { // if last item in a page
-            let newPage = page;
-            newPage--;
-            setPage(newPage);
+            setPage(page - 1);
         }
+    }
+
+    const handleClearListShift = () => {
+        props.handleClearList();
+        setPage(Math.ceil((list.data.filter((item) => item.complete === false)).length) / itemsPerPage);
     }
 
     const handleRestoreTaskShift = (item, index) => {
         props.handleRestoreTask(item, index, completedPage, itemsPerPage);
         if (index === 0 && completedPage !== 1) {
-            let newPage = completedPage;
-            newPage--;
-            setCompletedPage(newPage);
+            setCompletedPage(completedPage - 1);
         }
-    }
-
-    const handleImport = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-            const fileContents = event.target.result; // file contents as text
-            console.log(fileContents);
-            const fileObject = JSON.parse(fileContents);
-            console.log(fileObject);
-        };
-
-        reader.readAsText(file);
-
-        e.target.value = null; // reset after uploading
     }
 
     return (
         <ThemeProvider theme={theme}>
             <Box className="Editor" sx={{ // inner white box for list
                 bgcolor: '#fffff2',
-                minWidth: 250,
                 width: 0.5,
                 borderRadius: '32px',
                 marginRight: '15px',
@@ -180,21 +146,45 @@ function Editor(props) {
                             component='label'
                         >
                             import
-                            <input id='input-file' type='file' accept='.txt' hidden onChange={handleImport}/>
+                            <input
+                                id='input-file'
+                                type='file'
+                                accept='.txt'
+                                hidden
+                                onChange={(e) => {
+                                    props.setImportOpen(true);
+                                    props.setImportedFile(e.target.files[0]);
+                                    e.target.value = null;
+                                }}
+                            />
                         </Button>
                     </Tooltip>
-                    <Tooltip title='Downloads a file containing all of your lists.' placement='top' enterDelay={1000}>
+                    <Tooltip title='Download a file containing all of your lists.' placement='top' enterDelay={1000}>
                         <Button
                             id='export-button'
                             variant='contained'
                             size='small'
                             startIcon={<FileDownload/>}
+                            onClick={() => props.handleExport()}
                             sx={{ marginLeft: '10px' }}
                         >
                             export
                         </Button>
                     </Tooltip>
                 </Box>
+                <Dialog open={props.importOpen} onClose={() => props.setImportOpen(false)}>
+                    <IconButton onClick={() => props.setImportOpen(false)} sx={{ position: 'absolute', right: 10, top: 10 }}>
+                        <Close/>
+                    </IconButton>
+                    <DialogTitle>Import Options</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>Do you want to add to or replace your current lists?</DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button variant='contained' size='small' onClick={() => props.handleImport(props.importedFile, false)}>Add</Button>
+                        <Button variant='contained' size='small' onClick={() => props.handleImport(props.importedFile, true)}>Replace</Button>
+                    </DialogActions>
+                </Dialog>
                 <Box sx={{ display: 'flex' }}>
                     <Typography variant='h1' sx={{ marginTop: '3px' }}>
                         List:
@@ -203,7 +193,10 @@ function Editor(props) {
                         <Select
                             id='list-selector'
                             value={list ? list.title : ''}
-                            onChange={handleChangeListShift}
+                            onChange={(e) => {
+                                props.handleClickMenu(e);
+                                setPage(1);
+                            }}
                         >
                             {
                                 list && listManager.map((item, index) => (
@@ -258,24 +251,33 @@ function Editor(props) {
                     <IconButton onClick={props.handleDeleteListButton}>
                         <RemoveCircle id='delete-list-button' color='secondary'/>
                     </IconButton>
-                    <Dialog open={props.deleteOpen} onClose={() => props.handleDeleteOpen(false)}>
+                    <Dialog open={props.deleteOpen} onClose={() => props.setDeleteOpen(false)}>
                         <DialogContent>
                             <DialogContentText>Are you sure you want to delete this list?</DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                            <Button variant='contained' size='small' onClick={() => props.handleDeleteOpen(false)}>No</Button>
+                            <Button variant='contained' size='small' onClick={() => props.setDeleteOpen(false)}>No</Button>
                             <Button variant='contained' size='small' onClick={() => props.handleDeleteListDialog()}>Yes</Button>
                         </DialogActions>
                     </Dialog>
                 </Box>
-                { !props.noDeleteListOpen && !props.noAddListOpen && (
+                { !props.noDeleteListOpen && !props.noAddListOpen && !props.invalidFileOpen && !props.tooLongFileOpen && !props.repNameFileOpen && (
                     <Typography variant='h2' color='#fffff2'>( - _ - )</Typography>
                 )}
                 { props.noDeleteListOpen && (
-                    <Typography variant='h2' color='error'>This is your only list!</Typography>
+                    <Typography variant='h2' color='error' sx={{ position: 'absolute', right: 650, top: 265 }}>This is your only list!</Typography>
                 )}
                 { props.noAddListOpen && (
                     <Typography variant='h2' color='error'>You've reached a maximum of 10 lists!</Typography>
+                )}
+                { props.invalidFileOpen && (
+                    <Typography variant='h2' color='error'>This is an invalid file!</Typography>
+                )}
+                { props.tooLongFileOpen && (
+                    <Typography variant='h2' color='error'>This file has too many lists!</Typography>
+                )}
+                { props.repNameFileOpen && (
+                    <Typography variant='h2' color='error'>This file has one (or more) existing list name!</Typography>
                 )}
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Typography variant='h1' sx={{ marginTop: '30px' }}>To-do:</Typography>
@@ -317,13 +319,13 @@ function Editor(props) {
                             placeholder='add task'
                             value={newTask}
                             onChange={(e) => setNewTask(e.target.value)}
-                            onKeyDown={checkKeyPress}
+                            onKeyDown={(e) => checkKeyPress(e)}
                             inputProps={{ autoComplete: 'off' }}
                             sx={{ marginRight: '10px', flex: 1 }}
                         >
 
                         </TextField>
-                        <IconButton onClick={handleAddTaskShift}>
+                        <IconButton onClick={() => handleAddTaskShift()}>
                             <AddCircle id='add-task-button' color='secondary'/>
                         </IconButton>
                     </Box>
@@ -340,7 +342,7 @@ function Editor(props) {
                             id='completed-tasks-button'
                             variant='contained'
                             size='small'
-                            onClick={props.handleClearList}
+                            onClick={() => handleClearListShift()}
                         >
                             clear
                         </Button>
@@ -360,7 +362,7 @@ function Editor(props) {
                         <Pagination
                             size='small'
                             color='primary'
-                            count={numPages}
+                            count={Math.ceil(list.data.length / itemsPerPage)}
                             page={page}
                             onChange={(e, value) => setPage(value)}
                         />
@@ -387,14 +389,14 @@ function Editor(props) {
                                                         endAdornment={
                                                             <InputAdornment position='end'>
                                                                 <IconButton edge='end' onClick={() => handleRestoreTaskShift(item.name, index)}>
-                                                                    <RestoreFromTrash id='restore-task-icon' color='secondary'/>
+                                                                    <RestoreFromTrash id='restore-task-icon' color='secondary' />
                                                                 </IconButton>
                                                             </InputAdornment>
                                                         }
                                                     />
                                                 </FormControl>
                                             </ListItem>
-                                    ))
+                                        ))
                                 }
                                 <ListItem disableGutters sx={{ padding: '0px' }}>
                                     { props.maxTasksRestored &&
@@ -403,7 +405,7 @@ function Editor(props) {
                                 </ListItem>
                             </List>
                             { completedTasks.length === 0 && (
-                                    <DialogContentText>There are currently no completed tasks.</DialogContentText>
+                                <DialogContentText>There are currently no completed tasks.</DialogContentText>
                             )}
                         </DialogContent>
                         <DialogActions sx={{ paddingTop: '15px' }}>
@@ -411,7 +413,7 @@ function Editor(props) {
                                 <Pagination
                                     size='small'
                                     color='primary'
-                                    count={completedNumPages}
+                                    count={Math.ceil(completedTasks.length / itemsPerPage)}
                                     page={completedPage}
                                     onChange={(e, value) => setCompletedPage(value)}
                                 />
