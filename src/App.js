@@ -309,7 +309,7 @@ function App() {
 
   const handleCheckTask = (e, index, page, itemsPerPage) => {
     const currentTime = Date.now();
-    if (currentTime - lastCheckTime > 300) { // prevents you from checking too fast (so setInterval can do its thing)
+    if (currentTime - lastCheckTime > 500) { // prevents you from checking too fast (so setInterval can do its thing)
       setLastCheckTime(currentTime);
 
       const newIndex = index + (itemsPerPage * (page - 1));
@@ -351,9 +351,12 @@ function App() {
             if (newMoney === oldMoney + 10) {
               clearInterval(counter);
             }
-          }, 20);
+          }, 10);
           newDailyMoney = dailyMoney + 10;
           setDailyMoney(newDailyMoney);
+
+          // setInterval does not seem to update local variables properly so we do not use them for updating
+          localStorage.setItem("wallet", JSON.stringify(oldMoney + 10));
         }
       }
       else {
@@ -365,14 +368,15 @@ function App() {
             if (newMoney === oldMoney - 10) {
               clearInterval(counter);
             }
-          }, 20);
+          }, 10);
           newDailyMoney = dailyMoney - 10;
           setDailyMoney(newDailyMoney);
+
+          localStorage.setItem("wallet", JSON.stringify(oldMoney - 10));
         }
       }
       setCompletedTasks(newCompletedTasks);
 
-      localStorage.setItem("wallet", JSON.stringify(newMoney));
       localStorage.setItem("dailyMoney", JSON.stringify(newDailyMoney));
     }
   }
