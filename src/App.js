@@ -309,7 +309,7 @@ function App() {
 
   const handleCheckTask = (e, index, page, itemsPerPage) => {
     const currentTime = Date.now();
-    if (currentTime - lastCheckTime > 500) { // prevents you from checking too fast (so setInterval can do its thing)
+    if (currentTime - lastCheckTime > 300) { // prevents you from checking too fast (so setInterval can do its thing)
       setLastCheckTime(currentTime);
 
       const newIndex = index + (itemsPerPage * (page - 1));
@@ -351,7 +351,7 @@ function App() {
             if (newMoney === oldMoney + 10) {
               clearInterval(counter);
             }
-          }, 10);
+          }, 20);
           newDailyMoney = dailyMoney + 10;
           setDailyMoney(newDailyMoney);
 
@@ -368,7 +368,7 @@ function App() {
             if (newMoney === oldMoney - 10) {
               clearInterval(counter);
             }
-          }, 10);
+          }, 20);
           newDailyMoney = dailyMoney - 10;
           setDailyMoney(newDailyMoney);
 
