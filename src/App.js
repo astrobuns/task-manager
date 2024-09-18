@@ -53,10 +53,42 @@ function App() {
     localStorage.setItem("wearing", JSON.stringify([initialCloset[0]]));
   }
   if (!localStorage.getItem("closet")) {
+    // let tempShop = JSON.parse(localStorage.getItem("shop"));
+    // if (tempShop && tempShop.length !== initialShop.length) {
+    //   let newCloset = [...initialCloset];
+    //   initialShop.forEach((item) => {
+    //     let found = tempShop.findIndex((i) => i.filename === item.filename);
+    //     if (found === -1) {
+    //       newCloset.push(item);
+    //     }
+    //   })
+    //   localStorage.setItem("closet", JSON.stringify(newCloset));
+    // }
+    // else {
+    //   localStorage.setItem("closet", JSON.stringify(initialCloset));
+    // }
     localStorage.setItem("closet", JSON.stringify(initialCloset));
+    localStorage.setItem("shop", JSON.stringify(initialShop));
+    localStorage.setItem("wearing", JSON.stringify([initialCloset[0]]));
   }
   if (!localStorage.getItem("shop")) {
+    // let tempCloset = JSON.parse(localStorage.getItem("closet"));
+    // if (tempCloset && (tempCloset.length) !== initialCloset.length) {
+    //   let newShop = [...initialShop];
+    //   tempCloset.forEach((item) => {
+    //     console.log(newShop);
+    //     let found = initialShop.findIndex((i) => i.filename === item.filename);
+    //     if (found !== -1) {
+    //       newShop.splice(found, 1);
+    //     }
+    //   })
+    //   localStorage.setItem("closet", JSON.stringify(newShop));
+    // } else {
+    //   localStorage.setItem("shop", JSON.stringify(initialShop));
+    // }
+    localStorage.setItem("closet", JSON.stringify(initialCloset));
     localStorage.setItem("shop", JSON.stringify(initialShop));
+    localStorage.setItem("wearing", JSON.stringify([initialCloset[0]]));
   }
 
   let listManager = JSON.parse(localStorage.getItem("listManager"));
