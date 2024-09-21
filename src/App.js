@@ -43,7 +43,7 @@ function App() {
     localStorage.setItem("day", JSON.stringify(new Date().getDate()));
   }
   if (!localStorage.getItem("dailyMoney")) {
-    if (localStorage.getItem("listManager")) { // presumably already mounted once--why are you deleting the daily limit hmm?
+    if (localStorage.getItem("closet")) { // presumably already mounted once--why are you deleting the daily limit hmm?
       localStorage.setItem("dailyMoney", JSON.stringify(100));
     } else {
       localStorage.setItem("dailyMoney", JSON.stringify(0));
@@ -407,7 +407,6 @@ function App() {
           localStorage.setItem("wallet", JSON.stringify(oldMoney - 10));
         }
       }
-      console.log(newDailyMoney);
       setCompletedTasks(newCompletedTasks);
 
       localStorage.setItem("dailyMoney", JSON.stringify(newDailyMoney));
