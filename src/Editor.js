@@ -115,7 +115,8 @@ function Editor(props) {
 
     const handleClearListShift = () => {
         props.handleClearList();
-        setPage(parseInt((((list.data.filter((item) => item.complete === false)).length) / itemsPerPage).toFixed(0)));
+        const tempPage = Math.ceil(((list.data.filter((item) => item.complete === false)).length) / itemsPerPage);
+        setPage(tempPage === 0 ? 1 : tempPage);
     }
 
     const handleRestoreTaskShift = (item, index) => {
