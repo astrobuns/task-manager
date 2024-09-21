@@ -93,6 +93,7 @@ function Editor(props) {
     }, [list.data]);
 
     const checkKeyPress = (e) => { // allows "enter" key to be used for adding tasks
+        
         if (e.keyCode === 13) {
             handleAddTaskShift();
         }
@@ -106,7 +107,10 @@ function Editor(props) {
         }
     }
 
-    const handleDeleteTaskShift = (index) => {
+    const handleDeleteTaskShift = (e, index) => {
+        if (e.detail === 0) { // is a RETURN event instead of a CLICK event, AKA you hit enter instead of actually clicking the button
+            return;
+        }
         props.handleDeleteTask(index, page, itemsPerPage);
         if (index === 0 && page !== 1) { // if last item in a page
             setPage(page - 1);
@@ -307,7 +311,7 @@ function Editor(props) {
                                             onChange={(e) => props.handleEditTask(e, index, page, itemsPerPage)}
                                             sx={{ width: 1, marginRight: '10px' }}
                                         />
-                                        <IconButton onClick={() => handleDeleteTaskShift(index)}>
+                                        <IconButton onClick={(e) => handleDeleteTaskShift(e, index)}>
                                             <RemoveCircle color='secondary'/>
                                         </IconButton>
                                     </ListItem>
