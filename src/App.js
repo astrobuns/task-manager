@@ -407,6 +407,7 @@ function App() {
           localStorage.setItem("wallet", JSON.stringify(oldMoney - 10));
         }
       }
+      console.log(newDailyMoney);
       setCompletedTasks(newCompletedTasks);
 
       localStorage.setItem("dailyMoney", JSON.stringify(newDailyMoney));
