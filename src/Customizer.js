@@ -257,7 +257,7 @@ function Customizer(props) {
                         )}
                     </Box>
                     <Avatar character={props.character} wearing={props.wearing} mouthOpen={mouthOpen}/>
-                    { primaryTab === 3 && props.currentItem && (
+                    { primaryTab === 3 && props.currentItem && !props.noBuyOpen && (
                         <div className="arrow_box">
                             <ReactTyped
                                 strings={[props.currentItem.description]}
@@ -276,6 +276,19 @@ function Customizer(props) {
                             >
                                 Buy
                             </Button>
+                        </div>
+                    )}
+                    { props.noBuyOpen && (
+                        <div className="arrow_box">
+                            <ReactTyped
+                                strings={["You don't have enough money."]}
+                                typeSpeed={20}
+                                showCursor={false}
+                                onBegin={() => animateMouth()}
+                                onDestroy={() => stopAnimateMouth()}
+                                onComplete={() => stopAnimateMouth()}
+                                style={{ fontSize: '14px', fontFamily: 'Pixelify Sans' }}
+                            />
                         </div>
                     )}
                 </Box>

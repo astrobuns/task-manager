@@ -43,7 +43,8 @@ function App() {
     localStorage.setItem("day", JSON.stringify(new Date().getDate()));
   }
   if (!localStorage.getItem("dailyMoney")) {
-    if (JSON.parse(localStorage.getItem("wallet")) !== 0) { // don't delete the daily limit >:(
+    if (JSON.parse(localStorage.getItem("wallet")) !== 0) {
+      console.log("don't delete the daily limit >:(");
       localStorage.setItem("dailyMoney", JSON.stringify(100));
     } else {
       localStorage.setItem("dailyMoney", JSON.stringify(0));
@@ -121,6 +122,7 @@ function App() {
   const [invalidFileOpen, setInvalidFileOpen] = useState(false);
   const [tooLongFileOpen, setTooLongFileOpen] = useState(false);
   const [repNameFileOpen, setRepNameFileOpen] = useState(false);
+  const [noBuyOpen, setNoBuyOpen] = useState(false);
 
   const [money, setMoney] = useState(initMoney);
   const [dailyMoney, setDailyMoney] = useState(initDailyMoney);
@@ -536,6 +538,7 @@ function App() {
   }
 
   const handleClickShopItem = (filename) => {
+    setNoBuyOpen(false);
     const item = shop.find((element) => element.filename === filename);
     if (currentItem && filename === currentItem.filename) { // if deselecting
       const newWearing = JSON.parse(localStorage.getItem("wearing")); // go back to original outfit
@@ -578,6 +581,9 @@ function App() {
       localStorage.setItem("shop", JSON.stringify(newShop));
       localStorage.setItem("closet", JSON.stringify(newCloset));
       localStorage.setItem("wallet", JSON.stringify(newMoney));
+    }
+    else {
+      setNoBuyOpen(true);
     }
   }
   const handleClickClosetItem = (filename) => {
@@ -682,6 +688,7 @@ function App() {
           setWearing={setWearing}
           handleBuy={handleBuy}
           handleClickClosetItem={handleClickClosetItem}
+          noBuyOpen={noBuyOpen}
         />
       </Box>
     </Container>
