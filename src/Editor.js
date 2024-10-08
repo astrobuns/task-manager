@@ -102,9 +102,16 @@ function Editor(props) {
     const handleAddTaskShift = () => {
         props.handleAddTask(newTask);
         setNewTask("");
+        // jumps to the page where added
+        // + 0.1; note that list.data.length will be (actual length - 1) at time of adding
+        // === 15; do not jump when attempting to add 16th task
+        const newPage = list.data.length === 15 ? 3 : Math.ceil((list.data.length + 0.1)/ 5);
+        setPage(newPage);
+        /*
         if (list.data.length % itemsPerPage === 0 && list.data.length !== 0) { // if added to a new page (not including the first one)
             setPage(page + 1);
         }
+        */
     }
 
     const handleDeleteTaskShift = (e, index) => {
