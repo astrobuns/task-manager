@@ -1,6 +1,6 @@
 import './Customizer.css';
 import { useState } from 'react';
-import { Box, createTheme, ThemeProvider, Tabs, Tab, Typography, IconButton, Button } from '@mui/material';
+import { Box, createTheme, ThemeProvider, Tabs, Tab, IconButton, Button } from '@mui/material';
 import { Pets, Checkroom, Store, ArrowDropUp, ArrowDropDown } from '@mui/icons-material'
 import { PiCatFill } from "react-icons/pi";
 import { FaRedhat, FaTshirt, FaGlasses } from "react-icons/fa";
