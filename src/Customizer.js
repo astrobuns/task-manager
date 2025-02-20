@@ -212,9 +212,6 @@ function Customizer(props) {
                                                 <ClosetItem key={index} handleClickClosetItem={props.handleClickClosetItem} filename={image.filename} alt={image.alt} price={image.price}/>
                                             ))
                                     )}
-                                    { primaryTab === 2 && secondaryTab === 4 && (
-                                        <Typography>h</Typography>
-                                    )}
                                     { primaryTab === 3 && secondaryTab === 1 && (
                                         shop
                                             .filter((item) => item.category === 'character')
@@ -238,9 +235,6 @@ function Customizer(props) {
                                             .map((image, index) => (
                                                 <ShopItem key={index} handleClickShopItem={props.handleClickShopItem} filename={image.filename} alt={image.alt} price={image.price}/>
                                             ))
-                                    )}
-                                    { primaryTab === 3 && secondaryTab === 4 && (
-                                        <Typography>l</Typography>
                                     )}
                                 </Box>
                                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: 1 }}>
